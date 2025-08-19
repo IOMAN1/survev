@@ -91,9 +91,11 @@ export class WeaponManager {
 
         this.player.cancelAnim();
 
+        /*
         if (cancelSlowdown) {
             this.player.shotSlowdownTimer = 0;
         }
+        */
         this.bursts.length = 0;
         this.meleeAttacks.length = 0;
         this.scheduledReload = false;
@@ -620,7 +622,9 @@ export class WeaponManager {
         const direction = this.player.dir;
         const toMouseLen = this.player.toMouseLen;
 
-        this.player.shotSlowdownTimer = itemDef.fireDelay;
+        if (this.player.shotSlowdownTimer <= itemDef.fireDelay) {
+            this.player.shotSlowdownTimer = itemDef.fireDelay;
+        }
 
         this.player.cancelAction();
 
