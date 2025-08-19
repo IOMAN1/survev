@@ -115,12 +115,19 @@ export class WeaponManager {
 
             const swappingToGun = nextWeaponDef.type == "gun";
 
-            effectiveSwitchDelay = swappingToGun ? nextWeaponDef.switchDelay : 0;
+            let newSwitchDelay = 0;
+            if (swappingToGun || nextWeaponDef.type === "melee") {
+                newSwitchDelay = curWeapon.cooldown > nextWeaponDef.switchDelay ? curWeapon.cooldown : nextWeaponDef.switchDelay;
+            }
 
+            effectiveSwitchDelay = swappingToGun ? newSwitchDelay : 0;
+
+            /*
             if (this.player.freeSwitchTimer < 0) {
                 effectiveSwitchDelay = GameConfig.player.baseSwitchDelay;
                 this.player.freeSwitchTimer = GameConfig.player.freeSwitchCooldown;
             }
+            */
 
             if (
                 swappingToGun &&
@@ -130,11 +137,11 @@ export class WeaponManager {
                 curWeaponDef.deployGroup / nextWeaponDef.deployGroup === 1 &&
                 curWeapon.cooldown > 0
             ) {
-                effectiveSwitchDelay = nextWeaponDef.switchDelay;
+                effectiveSwitchDelay = newSwitchDelay;
             } else if (nextWeaponDef.type === "melee") {
                 effectiveSwitchDelay = math.max(
                     nextWeapon.cooldown,
-                    nextWeaponDef.switchDelay,
+                    newSwitchDelay,
                 );
             }
 
