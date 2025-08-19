@@ -715,6 +715,7 @@ export const Main: MapDef = {
                 cache_06: 12,
                 tree_01: 320,
                 hedgehog_01: 24,
+                tree_13: 30,
                 container_01: 5,
                 container_02: 5,
                 container_03: 5,

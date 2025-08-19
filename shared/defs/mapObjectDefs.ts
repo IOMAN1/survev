@@ -10976,12 +10976,16 @@ export const MapObjectDefs: Record<string, MapObjectDef> = {
         },
     } as unknown as Partial<ObstacleDef>),
     tree_13: createTree({
+        scale: { createMin: 0.6, createMax: 0.9 },
+        map: { color: 0x2e6d07, scale: 3 },
+        terrain: { grass: false, beach: true },
         img: {
             sprite: "map-tree-13.img",
+            scale: 0.75,
             tint: 0xffffff,
             zIdx: 801,
         },
-    }),
+    }  as unknown as Partial<ObstacleDef>),
     tree_switch_01: createTreeSwitch({
         img: { sprite: "map-tree-switch-01.img" },
     }),

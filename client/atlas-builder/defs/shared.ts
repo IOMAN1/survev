@@ -245,6 +245,7 @@ export const SharedAtlas: AtlasDef = {
         "map/map-tree-07su.svg",
         "map/map-tree-08su.svg",
         "map/map-tree-09.svg",
+        "map/map-tree-13.svg",
         "map/map-tree-res-01.svg",
         "map/map-tree-res-02.svg",
 
