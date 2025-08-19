@@ -630,6 +630,8 @@ export class Player extends BaseGameObject {
     speed: number = 0;
     moveVel = v2.create(0, 0);
 
+    attackSpeed: number = 0;
+
     shotSlowdownTimer: number = 0;
 
     freeSwitchTimer: number = 0;
@@ -2166,6 +2168,7 @@ export class Player extends BaseGameObject {
         this.shotSlowdownTimer -= dt;
         if (this.shotSlowdownTimer <= 0) {
             this.shotSlowdownTimer = 0;
+            this.attackSpeed = 0;
         }
     }
 
@@ -4118,9 +4121,6 @@ export class Player extends BaseGameObject {
                 this.inventory[chosenWeaponDef.ammo] = ammo;
                 this.inventoryDirty = true;
             }
-            if (index === this.curWeapIdx) {
-                this.shotSlowdownTimer = 0;
-            }
         } else if (chosenWeaponDef.type == "throwable") {
             const backpackLevel = this.getGearLevel(this.backpack);
             const bagSpace = this.bagSizes[chosenWeaponType]
@@ -4705,7 +4705,7 @@ export class Player extends BaseGameObject {
         }
 
         if (this.shotSlowdownTimer > 0 && weaponDef.speed.attack !== undefined) {
-            this.speed += weaponDef.speed.attack;
+            this.speed += this.attackSpeed;
         }
 
         // if player is on water decrease speed

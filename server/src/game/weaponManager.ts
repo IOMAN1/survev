@@ -622,7 +622,9 @@ export class WeaponManager {
         const direction = this.player.dir;
         const toMouseLen = this.player.toMouseLen;
 
-        if (this.player.shotSlowdownTimer <= itemDef.fireDelay) {
+        this.player.attackSpeed = itemDef.speed.attack;
+
+        if (this.player.shotSlowdownTimer < itemDef.fireDelay) {
             this.player.shotSlowdownTimer = itemDef.fireDelay;
         }
 
