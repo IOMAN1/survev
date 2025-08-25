@@ -440,48 +440,47 @@ export class WeaponManager {
     }
 
     /**
-     * called when reload action completed, actually updates all state variables
+     * called when reload action completed and on promotions, actually updates all state variables
      */
-    reload(curWeapIdx = this.curWeapIdx): void {
+    reload(curWeapIdx = this.curWeapIdx, forceMaxReload = false): void {
         if (!this.weapons[curWeapIdx].type) return; // prevent rare bug
+
         const weapon = this.weapons[curWeapIdx];
         const weaponDef = GameObjectDefs[weapon.type] as GunDef;
         const trueAmmoStats = this.getTrueAmmoStats(weaponDef);
-        const activeWeaponAmmo = weapon.ammo;
-        const spaceLeft = trueAmmoStats.trueMaxClip - activeWeaponAmmo; // if gun is 27/30 ammo, spaceLeft = 3
-
         const inv = this.player.inventory;
 
+        // Prevent reloading if there somehow is no ammo in inventory
+        if (inv[weaponDef.ammo] <= 0 && !this.isInfinite(weaponDef)) return;
+
+        const activeWeaponAmmo = weapon.ammo;
+        const spaceLeft = trueAmmoStats.trueMaxClip - activeWeaponAmmo;
+
+        // Normal reload amount
         let amountToReload = trueAmmoStats.trueMaxReload;
+        // Guns that can reload to full from 0 ammo
         if (trueAmmoStats.trueMaxReloadAlt && activeWeaponAmmo === 0) {
             amountToReload = trueAmmoStats.trueMaxReloadAlt;
         }
+        // Used for underreloading guns on promotions
+        if (forceMaxReload) {
+            amountToReload = trueAmmoStats.trueMaxClip;
+        }
 
+        // damn this one sucks ass
         if (this.isInfinite(weaponDef)) {
+            //
             weapon.ammo += math.clamp(amountToReload, 0, spaceLeft);
-        } else if (inv[weaponDef.ammo] < spaceLeft) {
-            // 27/30, inv = 2
-            if (trueAmmoStats.trueMaxClip != amountToReload) {
-                // m870, mosin, spas: only refill by one bullet at a time
-                weapon.ammo++;
-                inv[weaponDef.ammo]--;
-            } else {
-                // mp5, sv98, ak47: refill to as much as you have left in your inventory
-                weapon.ammo += inv[weaponDef.ammo];
-                inv[weaponDef.ammo] = 0;
-            }
         } else {
-            // 27/30, inv = 100
             weapon.ammo += math.clamp(amountToReload, 0, spaceLeft);
             inv[weaponDef.ammo] -= math.clamp(amountToReload, 0, spaceLeft);
         }
 
-        // if you have an m870 with 2 ammo loaded and 0 ammo left in your inventory, your actual max clip is just 2 since you cant load anymore ammo
-        const realMaxClip =
-            inv[weaponDef.ammo] == 0 && !this.isInfinite(weaponDef)
-                ? weapon.ammo
-                : trueAmmoStats.trueMaxClip;
-        if (trueAmmoStats.trueMaxClip != amountToReload && weapon.ammo != realMaxClip) {
+        // Keep reloading underreloading guns until they're at max ammo
+        if (
+            amountToReload < trueAmmoStats.trueMaxClip &&
+            weapon.ammo < trueAmmoStats.trueMaxClip
+        ) {
             this.player.reloadAgain = true;
         }
 

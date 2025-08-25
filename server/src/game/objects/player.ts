@@ -982,7 +982,7 @@ export class Player extends BaseGameObject {
                     const curWeapDef = GameObjectDefs[this.weapons[i].type];
                     if (curWeapDef.type == "gun") {
                         // refills the ammo of the existing weapon
-                        this.weaponManager.reload(i);
+                        this.weaponManager.reload(i, true);
                     }
                     continue;
                 }
