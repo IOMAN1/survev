@@ -7,24 +7,12 @@ import { type Vec2, v2 } from "../../../../shared/utils/v2";
 import type { Game } from "../game";
 import { BaseGameObject } from "./gameObject";
 
-// max smokes an emitter can spawn
-const MAX_SMOKES = 8;
-// delay between smokes the emitter spawns
-const SPAWN_DELAY = 1.75;
-// min and max radius a smoke can reach
-const RAD_MIN = 5.5;
-const RAD_MAX = 6.5;
-// speed drag
-const SPEED_DRAG = 0.025;
-// min / max spawn speed
-const SPAWN_MIN_SPEED = 0;
-const SPAWN_MAX_SPEED = 1.5;
-
 class SmokeEmitter {
     active = true;
 
     smokesSpawned = 0;
     spawnTicker = 0;
+    activeTicker = 0;
 
     constructor(
         public smokeBarn: SmokeBarn,
@@ -36,13 +24,15 @@ class SmokeEmitter {
     update(dt: number) {
         this.spawnTicker -= dt;
         if (this.spawnTicker <= 0) {
-            if (this.smokesSpawned < MAX_SMOKES) {
+            if (this.smokesSpawned < 8) {
                 this.smokeBarn.addSmoke(this.pos, this.layer, this.interior, this, false);
                 this.smokesSpawned++;
-                this.spawnTicker = SPAWN_DELAY;
-            } else if (this.spawnTicker <= -SPAWN_DELAY) {
-                this.active = false;
+                this.spawnTicker = 1.75;
             }
+        }
+        this.activeTicker += dt;
+        if (this.activeTicker >= 16) {
+            this.active = false;
         }
     }
 
@@ -126,8 +116,10 @@ export class Smoke extends BaseGameObject {
     rad = 0;
     interior: number;
 
-    maxSize = util.random(RAD_MIN, RAD_MAX);
-    vel = util.randomPointInCircle(util.random(SPAWN_MIN_SPEED, SPAWN_MAX_SPEED));
+    maxSize = util.random(5.5, 6.5);
+    vel: Vec2;
+    growTime: number;
+    drag: number;
     emitter: SmokeEmitter;
 
     constructor(
@@ -143,8 +135,13 @@ export class Smoke extends BaseGameObject {
         this.interior = interior;
         this.emitter = emitter;
         if (startSmoke) {
-            this.rad = this.maxSize / 2;
-            this.vel = v2.mul(this.vel, 0.5);
+            this.growTime = 0.1;
+            this.vel = v2.mul(v2.randomUnit(), util.random(0, 1.5));
+            this.drag = 0.3;
+        } else {
+            this.growTime = 2;
+            this.vel = v2.mul(v2.randomUnit(), util.random(0.5, 1.5));
+            this.drag = 0.1;
         }
         this.bounds = collider.createAabbExtents(
             v2.create(0, 0),
@@ -154,12 +151,12 @@ export class Smoke extends BaseGameObject {
 
     update(dt: number) {
         const radOld = this.rad;
-        this.rad += (this.maxSize / 2) * dt;
+        this.rad += (this.maxSize / this.growTime) * dt;
         this.rad = math.clamp(this.rad, 0, this.maxSize);
 
         const posOld = v2.copy(this.pos);
         this.pos = v2.add(this.pos, v2.mul(this.vel, dt));
-        this.vel = v2.mul(this.vel, 1 / (1 + dt * SPEED_DRAG));
+        this.vel = v2.mul(this.vel, 1 / (1 + dt * this.drag));
 
         if (!v2.eq(posOld, this.pos) || !math.eqAbs(radOld, this.rad)) {
             this.setPartDirty();
