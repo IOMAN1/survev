@@ -628,7 +628,7 @@ export class Player extends BaseGameObject {
     dirNew = v2.create(1, 0);
 
     posOld = v2.create(0, 0);
-    
+
     vel = v2.mul(v2.create(1, 0), 0);
 
     collider: Circle;
@@ -2001,7 +2001,7 @@ export class Player extends BaseGameObject {
         }
 
         this.posOld = v2.copy(this.pos);
-        
+
         this.vel = v2.mul(this.vel, 1 / (1 + dt * 4));
         this.pos = v2.add(this.pos, v2.mul(this.vel, dt));
 
@@ -3017,7 +3017,7 @@ export class Player extends BaseGameObject {
         this.downedDamageTicker = GameConfig.player.downedDamageBuffer;
         this.boost = 0;
         this.health = 100;
-        
+
         this.vel = v2.mul(params.dir, 10);
 
         if (this.game.gas.currentRad <= 0.1) {
