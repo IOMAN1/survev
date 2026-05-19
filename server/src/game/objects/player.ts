@@ -3160,6 +3160,9 @@ export class Player extends BaseGameObject {
                             this.pos,
                             this.layer,
                             item.count,
+                            undefined,
+                            util.random(7.5, 11),
+                            v2.randomUnit(),
                         );
                     }
 
@@ -3172,6 +3175,9 @@ export class Player extends BaseGameObject {
                                 this.pos,
                                 this.layer,
                                 item.count,
+                                undefined,
+                                util.random(7.5, 11),
+                                v2.randomUnit(),
                             );
                         }
                     }
@@ -3352,7 +3358,15 @@ export class Player extends BaseGameObject {
                     break;
                 case "melee":
                     if (def.noDropOnDeath || weap.type === "fists") break;
-                    this.game.lootBarn.addLoot(weap.type, this.pos, this.layer, 1);
+                    this.game.lootBarn.addLoot(
+                        weap.type,
+                        this.pos,
+                        this.layer,
+                        1,
+                        undefined,
+                        util.random(7.5, 11),
+                        v2.randomUnit(),
+                    );
                     weap.type = "fists";
                     break;
                 case "throwable":
@@ -3370,7 +3384,15 @@ export class Player extends BaseGameObject {
 
             const amount = this.invManager.get(item);
             if (amount > 0) {
-                this.game.lootBarn.addLoot(item, this.pos, this.layer, amount);
+                this.game.lootBarn.addLoot(
+                    item,
+                    this.pos,
+                    this.layer,
+                    amount,
+                    undefined,
+                    util.random(7.5, 11),
+                    v2.randomUnit(),
+                );
             }
         }
 
@@ -3379,13 +3401,29 @@ export class Player extends BaseGameObject {
             if (!type) continue;
             const def = GameObjectDefs[type] as HelmetDef | ChestDef | BackpackDef;
             if (!!(def as ChestDef).noDrop || def.level < 1) continue;
-            this.game.lootBarn.addLoot(type, this.pos, this.layer, 1);
+            this.game.lootBarn.addLoot(
+                type,
+                this.pos,
+                this.layer,
+                1,
+                undefined,
+                util.random(7.5, 11),
+                v2.randomUnit(),
+            );
         }
 
         if (this.outfit) {
             const def = GameObjectDefs[this.outfit] as OutfitDef;
             if (!def.noDropOnDeath && !def.noDrop) {
-                this.game.lootBarn.addLoot(this.outfit, this.pos, this.layer, 1);
+                this.game.lootBarn.addLoot(
+                    this.outfit,
+                    this.pos,
+                    this.layer,
+                    1,
+                    undefined,
+                    util.random(7.5, 11),
+                    v2.randomUnit(),
+                );
             }
         }
 
@@ -3397,6 +3435,9 @@ export class Player extends BaseGameObject {
                     this.pos,
                     this.layer,
                     1,
+                    undefined,
+                    util.random(7.5, 11),
+                    v2.randomUnit(),
                 );
             }
         }

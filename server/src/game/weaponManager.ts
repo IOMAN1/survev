@@ -1135,7 +1135,7 @@ export class WeaponManager {
                     gameSourceType: this.activeWeapon,
                     damageType: GameConfig.DamageType.Player,
                     source: this.player,
-                    dir: v2.neg(hit.dir),
+                    dir: this.player.dir,
                     weaponSourceType: this.activeWeapon,
                 });
                 if (obj.interactable) obj.interact(this.player);
@@ -1145,7 +1145,7 @@ export class WeaponManager {
                     gameSourceType: this.activeWeapon,
                     damageType: GameConfig.DamageType.Player,
                     source: this.player,
-                    dir: hit.dir,
+                    dir: v2.normalizeSafe(v2.sub(obj.pos, this.player.pos)),
                 });
             }
         }
