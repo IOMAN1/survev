@@ -51,10 +51,18 @@ export class LootBarn {
                 if (!res) return;
 
                 const forceFactor = 2.5;
-                const forceA = math.max(res.pen / a.lootRad, 0) * forceFactor * dt;
-                const forceB = math.max(res.pen / b.lootRad, 0) * forceFactor * dt;
+                const forceA = math.max(res.pen / a.lootRad, 0.1) * forceFactor * dt;
+                const forceB = math.max(res.pen / b.lootRad, 0.1) * forceFactor * dt;
                 a.pos = v2.sub(a.pos, v2.mul(res.dir, forceA));
                 b.pos = v2.add(b.pos, v2.mul(res.dir, forceB));
+                a.setPartDirty();
+                a.game.grid.updateObject(a);
+                a.mapIndicator?.updatePosition(a.pos);
+                a.game.map.clampToMapBounds(a.pos, a.rad);
+                b.setPartDirty();
+                b.game.grid.updateObject(b);
+                b.mapIndicator?.updatePosition(b.pos);
+                b.game.map.clampToMapBounds(b.pos, b.rad);
             },
         );
 
